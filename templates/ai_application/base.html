@@ -1,0 +1,26 @@
+{% load render_partial %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت‌بات هوش مصنوعی</title>
+    {% render_partial 'ai_module.views.header_components' %}
+</head>
+<body class="bg-gray-800 text-gray-200">
+
+    <div class="relative flex h-screen overflow-hidden">
+        <!-- mobile -->
+        <div id="backdrop" class="fixed inset-0 bg-black/60 z-10 hidden md:hidden"></div>
+
+        <!-- Sidebar -->
+        {% render_partial 'ai_module.views.sidebar' %}
+        <!-- main chat -->
+        {% block body_chat %}{% endblock %}
+    </div>
+
+    {% render_partial 'ai_module.views.footer_components' %}
+
+</body>
+</html>
