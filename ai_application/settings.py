@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l#f7ksjiypsvczcsrecakgk$tet^ah63*18%lbpj3h9wy&j+l+'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -131,5 +132,5 @@ MEDIA_ROOT = BASE_DIR / 'medias'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AI_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWE4NmY4ZWI4ZGZhMTQzZDYyZWY3NTUiLCJ0eXBlIjoiYXV0aCIsImlhdCI6MTc1MzE2ODQ0NH0.epMxwY9F8OpiE_kkZcvrmdN_1_pclSEVmoRcb8xiJd8"
+AI_API_KEY = os.getenv('AI_API_KEY')
 AI_MODEL = "openai/gpt-4o-mini"
