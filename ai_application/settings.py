@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_render_partial',
+    'openai',
     'ai_module',
+    'account_module',
 ]
 
 MIDDLEWARE = [
@@ -102,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -111,7 +113,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+AUTH_USER_MODEL = 'account_module.Users'
+LOGIN_URL = '/'
+
+STATIC_URL = '/static/'
+# STATIC_ROOT = [BASE_DIR / 'static']
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
     ]
@@ -123,3 +129,7 @@ MEDIA_ROOT = BASE_DIR / 'medias'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AI_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWE4NmY4ZWI4ZGZhMTQzZDYyZWY3NTUiLCJ0eXBlIjoiYXV0aCIsImlhdCI6MTc1MzE2ODQ0NH0.epMxwY9F8OpiE_kkZcvrmdN_1_pclSEVmoRcb8xiJd8"
+AI_MODEL = "openai/gpt-4o-mini"

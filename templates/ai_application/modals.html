@@ -1,0 +1,100 @@
+<!-- Login/Signup Modal -->
+<div id="auth-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-md z-50 flex items-center justify-center hidden">
+    <div class="rounded-lg shadow-xl p-8 w-full max-w-md m-4 glass-modal-content">
+        <div class="mb-6">
+            <div class="flex border-b border-gray-600">
+                <button id="login-tab" class="flex-1 py-2 text-center font-semibold border-b-2 transition-colors duration-300 tab-active">ورود</button>
+                <button id="signup-tab" class="flex-1 py-2 text-center font-semibold border-b-2 text-gray-400 transition-colors duration-300">ثبت نام</button>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-300">ایمیل</label>
+                    <input type="email" id="login-email"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-300">کلمه عبور</label>
+                    <input type="password" id="login-password"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <br>
+                <span id="login-message"></span>
+            </div>
+            <div class="mt-6">
+                <button type="submit"
+                        class="w-full px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-teal-500">
+                    ورود
+                </button>
+            </div>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signup-form" class="hidden">
+            <div class="space-y-4">
+                <div>
+                    <label for="signup-email" class="block text-sm font-medium text-gray-300">ایمیل</label>
+                    <input type="text" id="signup-email"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <div>
+                    <label for="signup-username" class="block text-sm font-medium text-gray-300">نام کاربری</label>
+                    <input type="text" id="signup-username"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-sm font-medium text-gray-300">کلمه عبور</label>
+                    <input type="password" id="signup-password"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <br>
+                <span id="signup-message"></span>
+            </div>
+            <div class="mt-6">
+                <button type="submit"
+                        class="w-full px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-teal-500">
+                    ثبت نام
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Password Change Modal -->
+<div id="password-modal-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden"></div>
+<div id="password-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md z-40 hidden">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold">تغییر کلمه عبور</h3>
+        <button id="close-modal-btn" class="p-1 rounded-full hover:bg-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" class="w-5 h-5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+    <form id="password-change-form">
+        <div class="space-y-4">
+            <div>
+                <label for="old_password" class="block text-sm font-medium text-gray-400 mb-1">کلمه عبور فعلی</label>
+                <input type="password" id="old_password" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-teal-500 focus:border-teal-500 focus:outline-none">
+            </div>
+            <div>
+                <label for="new_password1" class="block text-sm font-medium text-gray-400 mb-1">کلمه عبور جدید</label>
+                <input type="password" id="new_password1" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-teal-500 focus:border-teal-500 focus:outline-none">
+            </div>
+            <div>
+                <label for="new_password2" class="block text-sm font-medium text-gray-400 mb-1">تکرار کلمه عبور جدید</label>
+                <input type="password" id="new_password2" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-teal-500 focus:border-teal-500 focus:outline-none">
+            </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-4">
+            <button type="button" id="cancel-password-change" class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 bg-gray-600 hover:bg-gray-500">انصراف</button>
+            <button type="submit" class="px-4 py-2 rounded-md text-sm font-medium text-white bg-teal-600 hover:bg-teal-500">ذخیره تغییرات</button>
+        </div>
+    </form>
+</div>

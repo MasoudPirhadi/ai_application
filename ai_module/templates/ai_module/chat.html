@@ -1,66 +1,54 @@
 {% extends 'ai_application/base.html' %}
 
 {% block body_chat %}
-	<main class="flex-1 flex flex-col">
-            <!-- mobile header -->
-            <header class="p-4 border-b border-gray-700 flex items-center justify-between md:hidden">
-                <button id="menu-toggle" class="p-2 rounded-lg hover:bg-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <!-- Main chat section -->
+    <main class="flex-1 flex flex-col">
+        <!-- Header for mobile -->
+        <header class="p-4 border-b border-gray-700 flex items-center justify-between md:hidden">
+            <button id="menu-toggle" class="p-2 rounded-lg hover:bg-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round" class="w-6 h-6">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <h1 id="mobile-chat-title" class="text-lg font-bold">چت جدید</h1>
+            <div class="w-8"></div> <!-- Spacer -->
+        </header>
+
+        <div id="chat-container" class="flex-1 p-4 md:p-6 overflow-y-auto chat-scroll">
+            <!-- Chat content is dynamically inserted here -->
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="text-center text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round" class="w-16 h-16 mx-auto mb-4">
+                        <path d="M12 8V4H8"></path>
+                        <path d="M20 12v4h-4"></path>
+                        <path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H8"></path>
+                        <path d="M16 4.5A2.5 2.5 0 0 1 13.5 7H12"></path>
+                        <path d="M3 3l18 18"></path>
+                    </svg>
+                    <h2 class="text-2xl font-bold text-gray-400">چت‌بات هوش مصنوعی</h2>
+                    <p class="mt-2">یک چت را از تاریخچه انتخاب کنید یا یک گفتگوی جدید را شروع کنید.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text input box -->
+        <div class="p-4 bg-gray-900/50 border-t border-gray-700">
+            <div class="flex items-end gap-2 bg-gray-700 rounded-xl p-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-teal-500">
+                <textarea id="message-input" rows="1" class="w-full flex-grow bg-transparent text-gray-200 rounded-lg p-2 resize-none focus:outline-none"
+                          placeholder="پیام خود را اینجا بنویسید..."></textarea>
+                <button id="send-button"
+                        class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-teal-600 rounded-full transform transition-all duration-200 ease-in-out hover:bg-teal-500 hover:scale-110 active:scale-95 focus:outline-none disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round" class="w-5 h-5 text-white">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
                 </button>
-                <h1 class="text-lg font-bold">چت‌بات AI</h1>
-                <div class="w-8"></div> <!-- Spacer -->
-            </header>
-
-            <div id="chat-container" class="flex-1 p-4 md:p-6 overflow-y-auto chat-scroll">
-                <!-- user message -->
-                <div class="flex items-start gap-3 mb-6">
-                    <img src="https://placehold.co/40x40/7e22ce/ffffff?text=U" alt="آواتار کاربر" class="w-10 h-10 rounded-full">
-                    <div class="bg-gray-700 p-4 rounded-lg rounded-tr-none max-w-2xl">
-                        <p class="font-bold text-white mb-1">شما</p>
-                        <p class="text-gray-300">یک UI/UX حرفه‌ای با سلیقه خودت واسم طراحی کن برای هوش مصنوعی که بتوان پرسش و پاسخ کرد.</p>
-                    </div>
-                </div>
-
-                <!-- ai message -->
-                <div class="flex items-start gap-3 mb-6">
-                    <img src="https://placehold.co/40x40/10b981/ffffff?text=AI" alt="آواتار هوش مصنوعی" class="w-10 h-10 rounded-full">
-                    <div class="bg-gray-900 p-4 rounded-lg rounded-tl-none max-w-2xl">
-                        <p class="font-bold text-teal-400 mb-2">هوش مصنوعی</p>
-                        <p class="text-gray-300 leading-relaxed">
-                            حتماً! من یک رابط کاربری مدرن و کاربرپسند برای شما طراحی کرده‌ام که بر سه اصل کلیدی تمرکز دارد:
-                        </p>
-                        <ul class="list-disc list-inside mt-3 space-y-2 text-gray-300">
-                            <li><strong>سادگی و تمرکز:</strong> طراحی مینیمال برای جلوگیری از حواس‌پرتی و تمرکز کامل کاربر بر روی گفتگو.</li>
-                            <li><strong>خوانایی بالا:</strong> استفاده از فونت خوانا و کنتراست رنگی مناسب برای مطالعه راحت پاسخ‌ها.</li>
-                            <li><strong>تجربه روان:</strong> انیمیشن‌های ظریف و بارگذاری سریع برای ایجاد یک تجربه کاربری لذت‌بخش.</li>
-                        </ul>
-                        <p class="text-gray-400 text-xs mt-4">پاسخ در چند ثانیه تولید شد.</p>
-                    </div>
-                </div>
-                 <!-- message is typing ... -->
-                <div id="typing-indicator" class="flex items-start gap-3 mb-6 hidden">
-                    <img src="https://placehold.co/40x40/10b981/ffffff?text=AI" alt="آواتار هوش مصنوعی" class="w-10 h-10 rounded-full">
-                    <div class="bg-gray-900 p-4 rounded-lg rounded-tl-none">
-                        <div class="flex items-center space-x-2 space-x-reverse">
-                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0s;"></span>
-                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></span>
-                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></span>
-                        </div>
-                    </div>
-                </div>
             </div>
-
-            <!-- input message -->
-            <div class="p-4 bg-gray-900/50 border-t border-gray-700">
-                <div class="flex items-end gap-2 bg-gray-700 rounded-xl p-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-teal-500">
-                    <textarea id="message-input" rows="1" class="w-full flex-grow bg-transparent text-gray-200 rounded-lg p-2 resize-none focus:outline-none" placeholder="پیام خود را اینجا بنویسید..."></textarea>
-                    <button id="send-button" class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-teal-600 rounded-full transform transition-all duration-200 ease-in-out hover:bg-teal-500 hover:scale-110 active:scale-95 focus:outline-none disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-white"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
-                </div>
-                <p class="text-center text-xs text-gray-500 mt-2">
-                    این یک نسخه نمایشی است. پاسخ‌های هوش مصنوعی ممکن است دقیق نباشند.
-                </p>
-            </div>
-        </main>
+        </div>
+    </main>
 {% endblock %}

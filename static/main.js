@@ -1,80 +1,323 @@
+// ===================================
+// DOM Elements
+// ===================================
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 const chatContainer = document.getElementById('chat-container');
-const typingIndicator = document.getElementById('typing-indicator');
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.getElementById('sidebar');
 const backdrop = document.getElementById('backdrop');
+const chatHistoryList = document.getElementById('chat-history-list');
+const newChatBtn = document.getElementById('new-chat-btn');
+const mobileChatTitle = document.getElementById('mobile-chat-title');
+const appContainer = document.getElementById('app-container');
+const authModal = document.getElementById('auth-modal');
+// Auth Modal elements
+const loginTab = document.getElementById('login-tab');
+const signupTab = document.getElementById('signup-tab');
+const loginForm = document.getElementById('login-form');
+const signupForm = document.getElementById('signup-form');
+const accountDropdownButton = document.getElementById('account-menu-button');
+const accountDropdown = document.getElementById('account-dropdown');
+const changePasswordBtn = document.getElementById('change-password-btn');
+const passwordModalBackdrop = document.getElementById('password-modal-backdrop');
+const passwordModal = document.getElementById('password-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const cancelPasswordChange = document.getElementById('cancel-password-change');
+const passwordChangeForm = document.getElementById('password-change-form');
+const logoutBtn = document.getElementById('logout-btn');
+const usernameDisplay = document.getElementById('username-display');
+const signupMessage = document.getElementById('signup-message');
+const loginMessage = document.getElementById('login-message');
 
-// close & open sidebar
+// ===================================
+// Application State Management
+// ===================================
+let isUserLoggedIn = false; // Simulate user not being logged in initially
+let activeChatId = null;
+let chats = {}; // Data will be fetched from the server
+
+// ===================================
+// API Functions
+// ===================================
+
+async function fetchChats() {
+    const response = await fetch('/api/chats/');
+    const data = await response.json();
+    chats = data.reduce((acc, chat) => {
+        acc[chat.id] = {title: chat.title, messages: []};
+        return acc;
+    }, {});
+    renderSidebar();
+}
+
+async function fetchMessages(chatId) {
+    if (chats[chatId] && chats[chatId].messages.length > 0) {
+        renderChatMessages(chatId);
+        return;
+    }
+    const response = await fetch(`/api/chats/${chatId}/`);
+    const data = await response.json();
+    chats[chatId].messages = data;
+    renderChatMessages(chatId);
+}
+
+// ===================================
+// Render and Display Functions
+// ===================================
+
+const renderSidebar = () => {
+    chatHistoryList.innerHTML = '';
+    Object.keys(chats).forEach(chatId => {
+        const chat = chats[chatId];
+        const isActive = Number(chatId) === Number(activeChatId);
+        const link = document.createElement('a');
+        link.href = '#';
+        link.dataset.chatId = chatId;
+        link.className = `flex items-center p-2 text-sm rounded-lg transition-colors ${isActive ? 'bg-gray-700 font-semibold' : 'hover:bg-gray-700/50'}`;
+        link.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-3 ml-2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="truncate">${chat.title}</span>`;
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActiveChat(chatId);
+            if (window.innerWidth < 768) {
+                toggleMenu();
+            }
+        });
+        chatHistoryList.appendChild(link);
+    });
+};
+
+const renderChatMessages = (chatId) => {
+    if (!chatId || !chats[chatId]) {
+        chatContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-full"><div class="text-center text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16 mx-auto mb-4"><path d="M12 8V4H8"></path><path d="M20 12v4h-4"></path><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H8"></path><path d="M16 4.5A2.5 2.5 0 0 1 13.5 7H12"></path><path d="M3 3l18 18"></path></svg><h2 class="text-2xl font-bold text-gray-400">چت‌بات هوش مصنوعی</h2><p class="mt-2">یک گفتگوی جدید را شروع کنید.</p></div></div>`;
+        mobileChatTitle.textContent = 'چت جدید';
+        return;
+    }
+
+    const chat = chats[chatId];
+    mobileChatTitle.textContent = chat.title;
+    chatContainer.innerHTML = '';
+    chat.messages.forEach(message => appendMessage(message.sender, message.text));
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+};
+
+const appendMessage = (sender, text) => {
+    const isUser = sender === 'user';
+    const messageHTML = `<div class="flex items-start gap-3 mb-6 ${isUser ? 'justify-end' : ''}"><div class="${isUser ? 'bg-gray-600 text-white' : 'bg-gray-900'} p-4 rounded-lg max-w-2xl"><p class="font-bold mb-1"></p><p>${text.replace(/\n/g, '<br>')}</p></div></div>`;
+    chatContainer.insertAdjacentHTML('beforeend', messageHTML);
+};
+
+// Show typing indicator
+const showTypingIndicator = () => {
+    const typingHTML = `
+                <div id="typing-indicator" class="flex items-start gap-3 mb-6">
+                    <div class="bg-gray-900 p-4 rounded-lg rounded-tl-none">
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0s;"></span>
+                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></span>
+                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></span>
+                        </div>
+                    </div>
+                </div>`;
+    chatContainer.insertAdjacentHTML('beforeend', typingHTML);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+};
+
+const hideTypingIndicator = () => {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
+};
+
+// ===================================
+// Management and Event Functions
+// ===================================
+
+const setActiveChat = (chatId) => {
+    activeChatId = chatId;
+    renderSidebar();
+    if (chatId) {
+        fetchMessages(chatId);
+    } else {
+        renderChatMessages(null);
+    }
+};
+
+const sendMessage = async () => {
+    const messageText = messageInput.value.trim();
+    if (messageText === '') return;
+
+    // Append user message immediately for better UX
+    if (!activeChatId) {
+        chatContainer.innerHTML = ''; // Clear welcome message
+    }
+    appendMessage('user', messageText);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    const originalMessage = messageInput.value;
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    toggleSendButton();
+    showTypingIndicator();
+
+    const response = await fetch('/api/send_message/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: originalMessage, chatId: activeChatId})
+    });
+    const data = await response.json();
+
+    hideTypingIndicator();
+
+    if (!activeChatId) {
+        // This is a new chat, update the state and UI
+        activeChatId = data.chatId;
+        chats[data.chatId] = {title: data.chatTitle, messages: [{sender: 'user', text: originalMessage}]};
+        renderSidebar();
+    }
+
+    // Add AI response
+    chats[activeChatId].messages.push({sender: 'ai', text: originalMessage});
+    chats[activeChatId].messages.push(data.aiMessage);
+    appendMessage(data.aiMessage.sender, data.aiMessage.text);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+};
+
+// Toggle mobile sidebar menu
 const toggleMenu = () => {
     sidebar.classList.toggle('translate-x-full');
     sidebar.classList.toggle('translate-x-0');
     backdrop.classList.toggle('hidden');
 };
 
-if (menuToggle) {
-    menuToggle.addEventListener('click', toggleMenu);
-}
-if (backdrop) {
-    backdrop.addEventListener('click', toggleMenu);
-}
-
-// on & off send botton
+// Enable/disable send button
 const toggleSendButton = () => {
     sendButton.disabled = messageInput.value.trim() === '';
 };
 
-// text area & status botton
-messageInput.addEventListener('input', () => {
-    messageInput.style.height = 'auto';
-    messageInput.style.height = (messageInput.scrollHeight) + 'px';
-    toggleSendButton();
-});
-
-// send message
-const sendMessage = () => {
-    const messageText = messageInput.value.trim();
-    if (messageText === '') return;
-
-    // user message display
-    const userMessageHTML = `
-                <div class="flex items-start gap-3 mb-6 justify-end">
-                    <div class="bg-purple-600 text-white p-4 rounded-lg rounded-tr-none max-w-2xl">
-                        <p class="font-bold mb-1">شما</p>
-                        <p>${messageText.replace(/\n/g, '<br>')}</p>
-                    </div>
-                    <img src="https://placehold.co/40x40/7e22ce/ffffff?text=U" alt="آواتار کاربر" class="w-10 h-10 rounded-full">
-                </div>`;
-    chatContainer.insertAdjacentHTML('beforeend', userMessageHTML);
-
-    // input remove & reset height
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
-    toggleSendButton();
-
-    // is typing display
-    typingIndicator.classList.remove('hidden');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-
-    // example message ai
-    setTimeout(() => {
-        typingIndicator.classList.add('hidden');
-        const aiResponseHTML = `
-                    <div class="flex items-start gap-3 mb-6">
-                        <img src="https://placehold.co/40x40/10b981/ffffff?text=AI" alt="آواتار هوش مصنوعی" class="w-10 h-10 rounded-full">
-                        <div class="bg-gray-900 p-4 rounded-lg rounded-tl-none max-w-2xl">
-                            <p class="font-bold text-teal-400 mb-2">هوش مصنوعی</p>
-                            <p class="text-gray-300 leading-relaxed">
-                                این یک پاسخ شبیه‌سازی شده به پیام شما ("${messageText.replace(/\n/g, '<br>')}") است. در یک برنامه واقعی، این پاسخ توسط مدل زبان بزرگ تولید می‌شود.
-                            </p>
-                        </div>
-                    </div>`;
-        chatContainer.insertAdjacentHTML('beforeend', aiResponseHTML);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, 1500 + Math.random() * 1000); // delay data message
+const showAuthModal = () => {
+    authModal.classList.remove('hidden');
 };
 
+const hideAuthModal = () => {
+    authModal.classList.add('hidden');
+};
+
+const initializeApp = (username) => {
+    hideAuthModal();
+    appContainer.classList.remove('hidden');
+    usernameDisplay.textContent = username;
+    renderSidebar();
+    setActiveChat(null);
+    toggleSendButton();
+};
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    try {
+        const res = await fetch('api/login/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password}),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            loginMessage.innerHTML = ''
+            isUserLoggedIn = true;
+            initializeApp(data.username);
+            await fetchChats();
+        } else {
+            loginMessage.innerHTML = data.error;
+        }
+    } catch(error) {
+        loginMessage.innerHTML = error.messages;
+    }
+}
+
+const handleSignup = (e) => {
+    e.preventDefault();
+    const username = document.getElementById('signup-username').value;
+    isUserLoggedIn = true;
+    initializeApp(username);
+};
+
+async function handleLogout(e) {
+    e.preventDefault();
+    const res = await fetch('api/logout/')
+    const data = await res.json();
+    if (res.ok) {
+        isUserLoggedIn = false;
+        window.location.reload();
+    }
+}
+
+const switchAuthTab = (tab) => {
+    if (tab === 'login') {
+        loginTab.classList.add('tab-active');
+        signupTab.classList.remove('tab-active');
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+    } else {
+        loginTab.classList.remove('tab-active');
+        signupTab.classList.add('tab-active');
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    }
+};
+
+loginTab.addEventListener('click', () => switchAuthTab('login'));
+signupTab.addEventListener('click', () => switchAuthTab('signup'));
+loginForm.addEventListener("submit", handleLogin);
+signupForm.addEventListener("submit", handleSignup);
+
+// New Modal and Dropdown Logic
+const openPasswordModal = () => {
+    passwordModal.classList.remove('hidden');
+    passwordModalBackdrop.classList.remove('hidden');
+};
+const closePasswordModal = () => {
+    passwordModal.classList.add('hidden');
+    passwordModalBackdrop.classList.add('hidden');
+    passwordChangeForm.reset();
+};
+
+// accountDropdownButton.addEventListener('click', (e) => {
+//     e.stopPropagation();
+//     accountDropdown.classList.toggle('hidden');
+// });
+
+window.addEventListener('click', () => {
+    if (!accountDropdown.classList.contains('hidden')) {
+        accountDropdown.classList.add('hidden');
+    }
+});
+
+changePasswordBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    accountDropdown.classList.add('hidden');
+    openPasswordModal();
+})
+
+closeModalBtn.addEventListener('click', closePasswordModal);
+cancelPasswordChange.addEventListener('click', closePasswordModal)
+passwordModalBackdrop.addEventListener('click', closePasswordModal)
+
+passwordChangeForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('change password');
+    closePasswordModal();
+})
+
+// Click event for the new chat button
+newChatBtn.addEventListener('click', () => {
+    setActiveChat(null);
+});
+
+// Other events
+if (menuToggle) menuToggle.addEventListener('click', toggleMenu);
+if (backdrop) backdrop.addEventListener('click', toggleMenu);
 sendButton.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -82,4 +325,44 @@ messageInput.addEventListener('keydown', (e) => {
         sendMessage();
     }
 });
-toggleSendButton();
+messageInput.addEventListener('input', () => {
+    messageInput.style.height = 'auto';
+    messageInput.style.height = (messageInput.scrollHeight) + 'px';
+    toggleSendButton();
+});
+
+accountDropdownButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    accountDropdown.classList.toggle('hidden');
+});
+window.addEventListener('click', () => {
+    if (!accountDropdown.classList.contains('hidden')) {
+        accountDropdown.classList.add('hidden');
+    }
+});
+logoutBtn.addEventListener('click', handleLogout);
+
+// ===================================
+// Initial Execution
+// ===================================
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const getLogin = await fetch('api/check/login/');
+        const userData = await getLogin.json();
+        chatContainer.classList.remove('hidden');
+        isUserLoggedIn = true;
+        initializeApp(userData.username);
+        await fetchChats();
+    } catch (err) {
+        showAuthModal();
+    }
+
+
+    // appContainer.classList.remove('hidden');
+    // if (isUserLoggedIn) {
+    //     initializeApp(usernameDisplay.value);
+    // } else {
+    //     showAuthModal();
+    //     toggleSendButton();
+    // }
+});

@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-800 text-gray-200">
 
-    <div class="relative flex h-screen overflow-hidden">
+    <div id="app-container"  class="relative flex h-screen overflow-hidden">
         <!-- mobile -->
         <div id="backdrop" class="fixed inset-0 bg-black/60 z-10 hidden md:hidden"></div>
 
@@ -19,6 +19,8 @@
         <!-- main chat -->
         {% block body_chat %}{% endblock %}
     </div>
+    
+    {% render_partial 'ai_module.views.modals_components' %}
 
     {% render_partial 'ai_module.views.footer_components' %}
 

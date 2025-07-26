@@ -1,8 +1,9 @@
 body {
     font-family: 'Vazirmatn', sans-serif;
+    /* Add a background to make the glass effect noticeable */
+    background-image: linear-gradient(to top right, #1f2937, #374151, #111827);
 }
 
-/* scroll bar */
 .sidebar-scroll::-webkit-scrollbar {
     width: 4px;
 }
@@ -19,4 +20,30 @@ body {
 .chat-scroll::-webkit-scrollbar-thumb {
     background-color: #4a5568;
     border-radius: 20px;
+}
+
+.tab-active {
+    border-bottom-color: #14b8a6; /* teal-500 */
+    color: #f0fdfa; /* teal-50 */
+}
+
+/* Glassmorphism classes */
+.glass-sidebar {
+    background-color: rgba(17, 24, 39, 0.7); /* bg-gray-900/70 */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-modal-content {
+    background-color: rgba(31, 41, 55, 0.6); /* bg-gray-800/60 */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-header {
+    background-color: rgba(17, 24, 39, 0.5); /* bg-gray-900/50 */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
