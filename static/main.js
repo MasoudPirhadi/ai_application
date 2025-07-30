@@ -236,12 +236,31 @@ async function handleLogin(e) {
     }
 }
 
-const handleSignup = (e) => {
+async function handleSignup (e) {
     e.preventDefault();
     const username = document.getElementById('signup-username').value;
-    isUserLoggedIn = true;
-    initializeApp(username);
-};
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    try {
+        const res = await fetch('api/signup/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, username, password}),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+        isUserLoggedIn = true;
+        initializeApp(data.username);
+        await fetchChats();
+    } else {
+        signupMessage.innerHTML = data.message;
+    }
+    } catch(error) {
+        signupMessage.innerHTML = error.message;
+    }
+}
 
 async function handleLogout(e) {
     e.preventDefault();
@@ -306,8 +325,19 @@ passwordModalBackdrop.addEventListener('click', closePasswordModal)
 
 passwordChangeForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    alert('change password');
-    closePasswordModal();
+    async function changePassword() {
+        const password = document.getElementById('new_password1').value;
+        const res = await fetch('api/password/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({password})
+        })
+        const data = await res.json();
+        if (res.ok) {
+            // fix me
+            closePasswordModal();
+        }
+    }
 })
 
 // Click event for the new chat button

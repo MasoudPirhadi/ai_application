@@ -104,7 +104,10 @@ def login_view(request):
         email = data['email']
         password = data['password']
         user = Users.objects.filter(email=email).first()
-        if user is not None and check_password(password, user.password):
+
+        if not email or not password:
+            return JsonResponse({'success': False, 'error': 'لطفا اطلاعات مورد نیاز را تکمیل کنید.'}, status=400)
+        elif user is not None and check_password(password, user.password):
             login(request, user)
             return JsonResponse({'success': True, 'email': request.user.email, 'username': request.user.username})
 
@@ -119,3 +122,25 @@ def logout_view(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False})
+
+
+@csrf_exempt
+def signup_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data['email']
+        password = data['password']
+        username = data['username']
+
+        if not email or not password or not username:
+            return JsonResponse({'success': False, 'message': 'لطفا اطلاعات مورد نیاز را تکمیل کنید.'}, status=400)
+        elif Users.objects.filter(email=email).exists():
+            return JsonResponse({'status': False, 'message': 'این ایمیل قبلا ثبت نام شده است.'}, status=400)
+        elif Users.objects.filter(username=username).exists():
+            return JsonResponse({'status': False, 'message': 'این نام کاربری قبلا ثبت نام شده است.'}, status=400)
+
+        user = Users(email=email, username=username)
+        user.set_password(password)
+        user.save()
+        login(request, user)
+        return JsonResponse({'status': True, 'username': user.username})
