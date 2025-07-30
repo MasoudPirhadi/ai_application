@@ -48,6 +48,6 @@ body {
     -webkit-backdrop-filter: blur(12px);
 }
 
-#login-message, #signup-message {
+#login-message, #signup-message, #password-message {
     color: red;
 }

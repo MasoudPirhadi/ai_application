@@ -144,3 +144,26 @@ def signup_view(request):
         user.save()
         login(request, user)
         return JsonResponse({'status': True, 'username': user.username})
+
+
+@login_required()
+@csrf_exempt
+def change_password(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        old_password = data['oldPassword']
+        new_password = data['password']
+        new_password_confirmation = data['confirmPassword']
+
+        if not old_password or not new_password or not new_password_confirmation:
+            return JsonResponse({'success': False, 'message': 'لطفا اطلاعات مورد نیاز را تکمیل کنید.'})
+        elif new_password != new_password_confirmation:
+            return JsonResponse({"status": False, "message": "رمزعبور و تکرار رمزعبور یکسان نیست."})
+        elif not check_password(old_password, request.user.password):
+            return JsonResponse({"status": False, "message": "کلمه عبور فعلی صحیح نمی باشد."})
+
+        user = Users.objects.get(email=request.user.email)
+        user.set_password(new_password)
+        user.save()
+        logout(request)
+        return JsonResponse({'status': True})

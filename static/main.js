@@ -29,6 +29,7 @@ const logoutBtn = document.getElementById('logout-btn');
 const usernameDisplay = document.getElementById('username-display');
 const signupMessage = document.getElementById('signup-message');
 const loginMessage = document.getElementById('login-message');
+const passwordMessage = document.getElementById('password-message');
 
 // ===================================
 // Application State Management
@@ -231,12 +232,12 @@ async function handleLogin(e) {
         } else {
             loginMessage.innerHTML = data.error;
         }
-    } catch(error) {
+    } catch (error) {
         loginMessage.innerHTML = error.messages;
     }
 }
 
-async function handleSignup (e) {
+async function handleSignup(e) {
     e.preventDefault();
     const username = document.getElementById('signup-username').value;
     const email = document.getElementById('signup-email').value;
@@ -244,20 +245,20 @@ async function handleSignup (e) {
 
     try {
         const res = await fetch('api/signup/', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, username, password}),
-    });
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, username, password}),
+        });
 
-    const data = await res.json();
-    if (res.ok) {
-        isUserLoggedIn = true;
-        initializeApp(data.username);
-        await fetchChats();
-    } else {
-        signupMessage.innerHTML = data.message;
-    }
-    } catch(error) {
+        const data = await res.json();
+        if (res.ok) {
+            isUserLoggedIn = true;
+            initializeApp(data.username);
+            await fetchChats();
+        } else {
+            signupMessage.innerHTML = data.message;
+        }
+    } catch (error) {
         signupMessage.innerHTML = error.message;
     }
 }
@@ -323,20 +324,26 @@ closeModalBtn.addEventListener('click', closePasswordModal);
 cancelPasswordChange.addEventListener('click', closePasswordModal)
 passwordModalBackdrop.addEventListener('click', closePasswordModal)
 
-passwordChangeForm.addEventListener('submit', (e) => {
+passwordChangeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    async function changePassword() {
-        const password = document.getElementById('new_password1').value;
-        const res = await fetch('api/password/', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({password})
-        })
-        const data = await res.json();
-        if (res.ok) {
-            // fix me
-            closePasswordModal();
-        }
+    const oldPassword = document.getElementById('old_password').value;
+    const password = document.getElementById('new_password1').value;
+    const confirmPassword = document.getElementById('new_password2').value;
+    const res = await fetch('api/password/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({password, confirmPassword, oldPassword}),
+    })
+    const data = await res.json();
+    try {
+        if (data.status) {
+            window.location.reload();
+        // closePasswordModal();
+    } else {
+        passwordMessage.innerHTML = data.message;
+    }
+    } catch (error) {
+        passwordMessage.innerHTML = error.message;
     }
 })
 
