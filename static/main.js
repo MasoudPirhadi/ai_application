@@ -12,6 +12,19 @@ const newChatBtn = document.getElementById('new-chat-btn');
 const mobileChatTitle = document.getElementById('mobile-chat-title');
 const appContainer = document.getElementById('app-container');
 const authModal = document.getElementById('auth-modal');
+// Profile Modal elements
+const editProfileBtn = document.getElementById('edit-profile-btn');
+const profileModal = document.getElementById('profile-modal');
+const profileForm = document.getElementById('profile-form');
+const cancelProfileChangeBtn = document.getElementById('cancel-profile-change');
+const avatarUploadBtn = document.getElementById('avatar-upload-btn');
+const avatarUploadInput = document.getElementById('avatar-upload');
+const profileAvatarPreview = document.getElementById('profile-avatar-preview');
+const userAvatarButton = document.getElementById('user-avatar-button');
+const profileUsername = document.getElementById('profile-username');
+const profileEmail = document.getElementById('profile-email');
+const checkUsername = document.getElementById('check-username');
+const profileMessage = document.getElementById('profile-message');
 // Auth Modal elements
 const loginTab = document.getElementById('login-tab');
 const signupTab = document.getElementById('signup-tab');
@@ -203,6 +216,14 @@ const hideAuthModal = () => {
     authModal.classList.add('hidden');
 };
 
+const openProfileModal = () => {
+    profileModal.classList.remove('hidden');
+}
+
+const closeProfileModal = () => {
+    profileModal.classList.add('hidden');
+}
+
 const initializeApp = (username) => {
     hideAuthModal();
     appContainer.classList.remove('hidden');
@@ -292,6 +313,65 @@ signupTab.addEventListener('click', () => switchAuthTab('signup'));
 loginForm.addEventListener("submit", handleLogin);
 signupForm.addEventListener("submit", handleSignup);
 
+// Profile Modal
+editProfileBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+
+    const res = await fetch('api/edit-profile/', {
+        method: 'POST',
+        body: formData,
+        contentType: 'application/json',
+        credentials: 'include',
+    });
+    const data = await res.json();
+    profileAvatarPreview.src = data.avatar
+    profileUsername.value = data.username;
+    profileEmail.value = data.email;
+
+    accountDropdown.classList.add('hidden');
+    openProfileModal();
+
+});
+cancelProfileChangeBtn.addEventListener('click', () => closeProfileModal());
+profileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('username', document.getElementById('profile-username').value);
+    formData.append('avatar', document.getElementById('avatar-upload').files[0]);
+
+    const res = await fetch('/api/edit-profile/', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+    })
+    const data = await res.json();
+    if (data.status) {
+        var username = data.username;
+        profileAvatarPreview.src = data.avatar;
+        profileUsername.value = username;
+        profileEmail.value = data.email;
+        window.location.reload();
+        closeProfileModal();
+    } else {
+        checkUsername.innerHTML = data.error;
+    }
+});
+avatarUploadBtn.addEventListener('click', () => avatarUploadInput.click());
+avatarUploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const imageUrl = event.target.result;
+            profileAvatarPreview.src = imageUrl;
+            userAvatarButton.src = imageUrl;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 // New Modal and Dropdown Logic
 const openPasswordModal = () => {
     passwordModal.classList.remove('hidden');
@@ -338,10 +418,10 @@ passwordChangeForm.addEventListener('submit', async (e) => {
     try {
         if (data.status) {
             window.location.reload();
-        // closePasswordModal();
-    } else {
-        passwordMessage.innerHTML = data.message;
-    }
+            // closePasswordModal();
+        } else {
+            passwordMessage.innerHTML = data.message;
+        }
     } catch (error) {
         passwordMessage.innerHTML = error.message;
     }

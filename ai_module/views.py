@@ -167,3 +167,28 @@ def change_password(request):
         user.save()
         logout(request)
         return JsonResponse({'status': True})
+
+
+@login_required()
+@csrf_exempt
+def edit_profile(request):
+    if request.method == 'POST':
+        user = Users.objects.get(email=request.user.email)
+        if not user.profile:
+            avatar = '/static/images/Portrait_Placeholder.png'
+        else:
+            avatar = user.profile.url
+
+        username = request.POST.get('username')
+        new_avatar = request.FILES.getlist('avatar')
+
+        if Users.objects.filter(username=username).exclude(username=request.user.username).exists():
+            return JsonResponse({"statuss": "exist", "error": "این نام کاربری از قبل وجود دارد"})
+        if new_avatar:
+            user.profile = new_avatar[0]
+        if username:
+            user.username = username
+        user.save()
+
+        return JsonResponse({'status': True, 'avatar': avatar, "email": user.email, "username": request.user.username})
+

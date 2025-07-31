@@ -21,19 +21,20 @@
     <!-- User Account Section -->
     <div class="border-t border-gray-700 pt-4">
         <div class="relative">
-                <button id="account-menu-button" class="flex items-center w-full p-2 text-sm rounded-lg hover:bg-gray-700/50 transition-colors">
-                    {% if request.user.profile %}
-                        <img src="{{ request.user.profile.url }}" alt="تصویر پروفایل کاربر" class="w-8 h-8 rounded-full mr-3 ml-2">
-                    {% else %}
-                        <img src="/static/images/Portrait_Placeholder.png" alt="تصویر پروفایل کاربر" class="w-8 h-8 rounded-full mr-3 ml-2">
-                    {% endif %}
-                    <span id="username-display">{{ request.user }}</span>
-                    <svg class="w-4 h-4 mr-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m18 15-6-6-6 6"/>
-                    </svg>
-                </button>
-                <div id="account-dropdown" class="absolute bottom-full right-0 mb-2 w-48 bg-gray-800 rounded-md shadow-lg z-20 hidden transition-all duration-300">
+            <button id="account-menu-button" class="flex items-center w-full p-2 text-sm rounded-lg hover:bg-gray-700/50 transition-colors">
+                {% if request.user.profile %}
+                    <img src="{{ request.user.profile.url }}" alt="تصویر پروفایل کاربر" class="w-8 h-8 rounded-full mr-3 ml-2">
+                {% else %}
+                    <img src="/static/images/Portrait_Placeholder.png" alt="تصویر پروفایل کاربر" class="w-8 h-8 rounded-full mr-3 ml-2">
+                {% endif %}
+                <span id="username-display">{{ request.user }}</span>
+                <svg class="w-4 h-4 mr-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m18 15-6-6-6 6"/>
+                </svg>
+            </button>
+            <div id="account-dropdown" class="absolute bottom-full right-0 mb-2 w-48 bg-gray-800 rounded-md shadow-lg z-20 hidden transition-all duration-300">
+                <a href="#" id="edit-profile-btn" class="block w-full text-right px-4 py-2 text-sm text-gray-200 hover:bg-white/10 rounded-t-lg">ویرایش پروفایل</a>
                 <a href="#" id="change-password-btn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">تغییر کلمه عبور</a>
                 <a href="/accounts/logout/" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" id="logout-btn">خروج</a>
             </div>

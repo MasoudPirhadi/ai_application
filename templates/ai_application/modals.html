@@ -92,10 +92,43 @@
                 <input type="password" id="new_password2" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-teal-500 focus:border-teal-500 focus:outline-none">
             </div>
         </div>
-            <span id="password-message"></span>
+        <span id="password-message"></span>
         <div class="mt-6 flex justify-end gap-4">
             <button type="button" id="cancel-password-change" class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 bg-gray-600 hover:bg-gray-500">انصراف</button>
             <button type="submit" class="px-4 py-2 rounded-md text-sm font-medium text-white bg-teal-600 hover:bg-teal-500">ذخیره تغییرات</button>
         </div>
     </form>
+</div>
+<!-- Edit Profile Modal -->
+<div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md"></div>
+    <div class="relative bg-gray-800/60 backdrop-blur-2xl border border-white/10 rounded-lg shadow-xl p-8 w-full max-w-md m-4">
+        <h3 class="text-xl font-bold mb-6 text-center">ویرایش پروفایل</h3>
+        <form id="profile-form">
+            <div class="space-y-6">
+                <div class="flex flex-col items-center space-y-4">
+                    <img id="profile-avatar-preview" src="/static/images/Portrait_Placeholder.png" alt="آواتار" class="w-24 h-24 rounded-full object-cover">
+                    <input type="file" id="avatar-upload" class="hidden" accept="image/*">
+                    <button type="button" id="avatar-upload-btn" class="px-4 py-2 text-sm font-medium text-white bg-teal-600/80 rounded-md hover:bg-teal-600">تغییر عکس</button>
+                </div>
+                <div>
+                    <label for="profile-username" class="block text-sm font-medium text-gray-300">نام کاربری</label>
+                    <input type="text" id="profile-username"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <span id="check-username"></span>
+                <div>
+                    <label for="profile-email" class="block text-sm font-medium text-gray-300">ایمیل</label>
+                    <input disabled type="email" id="profile-email"
+                           class="mt-1 block w-full bg-gray-700/50 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+            </div>
+            
+                <span id="profile-message"></span>
+            <div class="mt-8 flex justify-end space-x-4 space-x-reverse">
+                <button type="button" id="cancel-profile-change" class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-600/80 rounded-md hover:bg-gray-600">انصراف</button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-500">ذخیره تغییرات</button>
+            </div>
+        </form>
+    </div>
 </div>

@@ -48,6 +48,11 @@ body {
     -webkit-backdrop-filter: blur(12px);
 }
 
-#login-message, #signup-message, #password-message {
+#login-message, #signup-message, #password-message, #profile-message, #check-username {
     color: red;
+}
+
+input:disabled {
+    cursor: not-allowed;
+    background-color: rgba(17, 24, 39, 0.7);
 }
